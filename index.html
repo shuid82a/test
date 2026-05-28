@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>午夜办公室 · 解密逃脱</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: radial-gradient(circle at 20% 10%, #233044, #101722 55%, #0a0e14);
+      color: #e9eef6;
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+    .game {
+      width: min(1000px, 100%);
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 14px;
+    }
+    .scene {
+      position: relative;
+      aspect-ratio: 16 / 10;
+      border: 2px solid #2d3f56;
+      border-radius: 12px;
+      overflow: hidden;
+      background:
+        linear-gradient(#1a2636 0 22%, #2b3b4f 22% 28%, #37485f 28% 72%, #2a3b52 72% 100%);
+      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.35);
+    }
+    .spot {
+      position: absolute;
+      border: 2px dashed transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .spot:hover { border-color: rgba(166, 215, 255, 0.55); background: rgba(166, 215, 255, 0.1); }
+    .label {
+      position: absolute;
+      bottom: 8px;
+      left: 10px;
+      font-size: 12px;
+      color: #9bb7d4;
+      opacity: 0.9;
+      pointer-events: none;
+    }
+    .obj {
+      position: absolute;
+      border-radius: 8px;
+      opacity: 0.95;
+      pointer-events: none;
+    }
+    .desk { left: 16%; top: 56%; width: 36%; height: 28%; background: #4b3628; }
+    .drawer { left: 24%; top: 66%; width: 16%; height: 10%; background: #3a281d; }
+    .door { right: 6%; top: 26%; width: 20%; height: 58%; background: #303744; border-radius: 2px; }
+    .clock { left: 12%; top: 16%; width: 12%; height: 18%; background: #e9eef6; border-radius: 50%; }
+    .calendar { left: 34%; top: 14%; width: 11%; height: 20%; background: #f3f6fa; color: #1d2a3a; }
+    .flags { left: 57%; top: 11%; width: 18%; height: 11%; background: linear-gradient(90deg, #db6f6f 33%, #f1c66b 33% 66%, #76c6a4 66%); }
+    .fuse-box { left: 70%; top: 50%; width: 10%; height: 14%; background: #566173; }
+    .note { left: 50%; top: 63%; width: 12%; height: 14%; background: #d7bf8e; transform: rotate(-8deg); }
+    .sidebar {
+      border: 2px solid #2d3f56;
+      border-radius: 12px;
+      padding: 12px;
+      background: rgba(17, 27, 39, 0.85);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: 1px;
+    }
+    .muted { margin: 0; color: #90a4bc; font-size: 13px; line-height: 1.5; }
+    .inventory {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 48px;
+      padding: 8px;
+      background: #121d2b;
+      border-radius: 8px;
+      border: 1px solid #304258;
+    }
+    .item {
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 999px;
+      background: #284a6a;
+      border: 1px solid #5f8db7;
+    }
+    .status {
+      padding: 10px;
+      border-radius: 8px;
+      background: #121d2b;
+      border: 1px solid #304258;
+      font-size: 13px;
+      color: #c7d8ea;
+      line-height: 1.6;
+      min-height: 82px;
+    }
+    .btn {
+      border: 1px solid #5f8db7;
+      background: #1f3952;
+      color: #e6f2ff;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .btn:hover { background: #2a4c6b; }
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      padding: 14px;
+    }
+    .modal.open { display: flex; }
+    .card {
+      width: min(460px, 100%);
+      background: #162231;
+      border: 2px solid #335072;
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .card h2 { margin: 0 0 8px; font-size: 20px; }
+    .card p { margin: 0 0 10px; line-height: 1.7; color: #c7d8ea; }
+    .row { display: flex; gap: 8px; }
+    input[type="text"] {
+      flex: 1;
+      padding: 9px 10px;
+      border-radius: 8px;
+      border: 1px solid #5f8db7;
+      background: #101a27;
+      color: #eaf4ff;
+      font-size: 15px;
+      letter-spacing: 2px;
+    }
+    .small { font-size: 12px; color: #86a4c2; }
+    @media (max-width: 900px) {
+      .game { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="game">
+    <section class="scene">
+      <div class="obj desk"></div>
+      <div class="obj drawer"></div>
+      <div class="obj door"></div>
+      <div class="obj clock"></div>
+      <div class="obj calendar"></div>
+      <div class="obj flags"></div>
+      <div class="obj fuse-box"></div>
+      <div class="obj note"></div>
+
+      <button class="spot" style="left:10%;top:12%;width:16%;height:23%" data-action="clock"></button>
+      <button class="spot" style="left:32%;top:12%;width:14%;height:24%" data-action="calendar"></button>
+      <button class="spot" style="left:56%;top:10%;width:20%;height:14%" data-action="flags"></button>
+      <button class="spot" style="left:22%;top:64%;width:20%;height:14%" data-action="drawer"></button>
+      <button class="spot" style="left:48%;top:61%;width:14%;height:17%" data-action="note"></button>
+      <button class="spot" style="left:68%;top:48%;width:14%;height:19%" data-action="fuse"></button>
+      <button class="spot" style="left:74%;top:24%;width:22%;height:62%" data-action="door"></button>
+
+      <div class="label">点击场景中的物品，寻找线索并解锁门禁</div>
+    </section>
+
+    <aside class="sidebar">
+      <h1>午夜办公室</h1>
+      <p class="muted">你被困在办公室。解开线索，找到保险丝，为门禁通电并输入正确密码逃出。</p>
+
+      <div>
+        <p class="muted" style="margin-bottom:6px">背包</p>
+        <div id="inventory" class="inventory"></div>
+      </div>
+
+      <div>
+        <p class="muted" style="margin-bottom:6px">当前状态</p>
+        <div id="status" class="status">先四处看看，找到抽屉密码线索。</div>
+      </div>
+
+      <button class="btn" id="restartBtn">重新开始</button>
+      <p class="small">解密流程：线索 → 抽屉密码(3位) → 保险丝 → 门禁密码(4位)</p>
+    </aside>
+  </div>
+
+  <div id="modal" class="modal">
+    <div class="card">
+      <h2 id="modalTitle"></h2>
+      <p id="modalText"></p>
+      <div id="modalInput" class="row" style="display:none">
+        <input type="text" id="codeInput" maxlength="6" autocomplete="off" />
+        <button class="btn" id="submitCodeBtn">确认</button>
+      </div>
+      <div class="row" style="justify-content:flex-end;margin-top:8px">
+        <button class="btn" id="closeModalBtn">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const state = {
+      inventory: [],
+      drawerUnlocked: false,
+      fuseInstalled: false,
+      escaped: false,
+      currentInputType: null, // drawer | door
+    };
+
+    const inventoryEl = document.getElementById("inventory");
+    const statusEl = document.getElementById("status");
+    const modalEl = document.getElementById("modal");
+    const modalTitleEl = document.getElementById("modalTitle");
+    const modalTextEl = document.getElementById("modalText");
+    const modalInputEl = document.getElementById("modalInput");
+    const codeInputEl = document.getElementById("codeInput");
+
+    function setStatus(text) {
+      statusEl.textContent = text;
+    }
+
+    function renderInventory() {
+      inventoryEl.innerHTML = "";
+      if (state.inventory.length === 0) {
+        inventoryEl.innerHTML = '<span class="small">（空）</span>';
+        return;
+      }
+      state.inventory.forEach(item => {
+        const tag = document.createElement("span");
+        tag.className = "item";
+        tag.textContent = item;
+        inventoryEl.appendChild(tag);
+      });
+    }
+
+    function hasItem(name) {
+      return state.inventory.includes(name);
+    }
+
+    function addItem(name) {
+      if (!hasItem(name)) {
+        state.inventory.push(name);
+        renderInventory();
+      }
+    }
+
+    function removeItem(name) {
+      state.inventory = state.inventory.filter(i => i !== name);
+      renderInventory();
+    }
+
+    function openModal(title, text, inputType = null) {
+      modalTitleEl.textContent = title;
+      modalTextEl.textContent = text;
+      state.currentInputType = inputType;
+      if (inputType) {
+        modalInputEl.style.display = "flex";
+        codeInputEl.value = "";
+        codeInputEl.focus();
+      } else {
+        modalInputEl.style.display = "none";
+      }
+      modalEl.classList.add("open");
+    }
+
+    function closeModal() {
+      modalEl.classList.remove("open");
+      state.currentInputType = null;
+    }
+
+    function handleSpot(action) {
+      if (state.escaped) return;
+
+      switch (action) {
+        case "clock":
+          openModal("挂钟", "挂钟停在 09:25。秒针不动。");
+          setStatus("你记下了时间：09:25。");
+          break;
+        case "calendar":
+          openModal("台历", "日期停在 6 月 14 日。今天应该就是这一天。");
+          setStatus("你记下了日期：14。");
+          break;
+        case "flags":
+          openModal("墙上的三角旗", "墙上挂着 2 面小三角旗。");
+          setStatus("你记下了旗子数量：2。");
+          break;
+        case "note":
+          openModal("便签纸", "便签写着：\n最终门禁密码 = 日期两位 + 分钟两位");
+          setStatus("门禁密码规则已获取。");
+          break;
+        case "drawer":
+          if (state.drawerUnlocked) {
+            openModal("抽屉", hasItem("保险丝") ? "抽屉是空的。" : "抽屉里有一个保险丝。");
+            if (!hasItem("保险丝")) {
+              addItem("保险丝");
+              setStatus("你拿到了保险丝。去配电盒安装它。");
+            }
+          } else {
+            openModal(
+              "上锁抽屉",
+              "需要 3 位数密码。\n线索：\n第一位 = 小时数 - 6\n第二位 = 日期个位\n第三位 = 三角旗数量",
+              "drawer"
+            );
+            setStatus("先根据线索算出抽屉密码。");
+          }
+          break;
+        case "fuse":
+          if (state.fuseInstalled) {
+            openModal("配电盒", "保险丝已安装，门禁已通电。");
+            setStatus("门禁已通电，去门口输入密码。");
+          } else if (hasItem("保险丝")) {
+            state.fuseInstalled = true;
+            removeItem("保险丝");
+            openModal("配电盒", "你将保险丝装了进去。\n嗡——门禁面板亮了。");
+            setStatus("很好，门禁已经通电。现在去解门锁密码。");
+          } else {
+            openModal("配电盒", "保险丝缺失，门禁无法通电。");
+            setStatus("你需要先从抽屉拿到保险丝。");
+          }
+          break;
+        case "door":
+          if (!state.fuseInstalled) {
+            openModal("门禁", "门禁断电，按键没有反应。");
+            setStatus("先给门禁通电。");
+          } else {
+            openModal("门禁", "请输入 4 位门禁密码。", "door");
+            setStatus("根据便签规则：日期两位 + 分钟两位。");
+          }
+          break;
+      }
+    }
+
+    function submitCode() {
+      const code = codeInputEl.value.trim();
+      if (!state.currentInputType) return;
+
+      if (state.currentInputType === "drawer") {
+        if (code === "342") {
+          state.drawerUnlocked = true;
+          openModal("解锁成功", "抽屉打开了，里面有一个保险丝。");
+          if (!hasItem("保险丝")) addItem("保险丝");
+          setStatus("抽屉已开，你拿到了保险丝。");
+        } else {
+          openModal("密码错误", "不对，再想想三个线索：09点、14日、2面旗。", "drawer");
+          setStatus("抽屉密码错误。");
+        }
+      }
+
+      if (state.currentInputType === "door") {
+        if (code === "1425") {
+          state.escaped = true;
+          openModal("逃脱成功", "门锁发出“滴”的一声，门开了。\n你成功逃出了午夜办公室！");
+          setStatus("恭喜通关！");
+        } else {
+          openModal("门禁错误", "门禁发出红色警报。再核对便签规则。", "door");
+          setStatus("门禁密码错误。");
+        }
+      }
+    }
+
+    function bindEvents() {
+      document.querySelectorAll(".spot").forEach(btn => {
+        btn.addEventListener("click", () => handleSpot(btn.dataset.action));
+      });
+      document.getElementById("closeModalBtn").addEventListener("click", closeModal);
+      document.getElementById("submitCodeBtn").addEventListener("click", submitCode);
+      codeInputEl.addEventListener("keydown", e => {
+        if (e.key === "Enter") submitCode();
+      });
+      document.getElementById("restartBtn").addEventListener("click", () => location.reload());
+      modalEl.addEventListener("click", e => {
+        if (e.target === modalEl) closeModal();
+      });
+    }
+
+    bindEvents();
+    renderInventory();
+  </script>
+</body>
+</html>
