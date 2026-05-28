@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>午夜办公室 · 解密逃脱</title>
+  <title>解密逃脱</title>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -29,8 +29,22 @@
       border-radius: 12px;
       overflow: hidden;
       background:
+        radial-gradient(circle at 72% 18%, rgba(255, 243, 190, 0.13), transparent 26%),
         linear-gradient(#1a2636 0 22%, #2b3b4f 22% 28%, #37485f 28% 72%, #2a3b52 72% 100%);
       box-shadow: 0 16px 30px rgba(0, 0, 0, 0.35);
+    }
+    .scene::before {
+      content: "";
+      position: absolute;
+      inset: 28% 0 0;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.03) 0 22px,
+          rgba(0, 0, 0, 0.04) 22px 44px
+        );
+      opacity: 0.35;
+      pointer-events: none;
     }
     .spot {
       position: absolute;
@@ -55,14 +69,239 @@
       opacity: 0.95;
       pointer-events: none;
     }
-    .desk { left: 16%; top: 56%; width: 36%; height: 28%; background: #4b3628; }
-    .drawer { left: 24%; top: 66%; width: 16%; height: 10%; background: #3a281d; }
-    .door { right: 6%; top: 26%; width: 20%; height: 58%; background: #303744; border-radius: 2px; }
-    .clock { left: 12%; top: 16%; width: 12%; height: 18%; background: #e9eef6; border-radius: 50%; }
-    .calendar { left: 34%; top: 14%; width: 11%; height: 20%; background: #f3f6fa; color: #1d2a3a; }
-    .flags { left: 57%; top: 11%; width: 18%; height: 11%; background: linear-gradient(90deg, #db6f6f 33%, #f1c66b 33% 66%, #76c6a4 66%); }
-    .fuse-box { left: 70%; top: 50%; width: 10%; height: 14%; background: #566173; }
-    .note { left: 50%; top: 63%; width: 12%; height: 14%; background: #d7bf8e; transform: rotate(-8deg); }
+    .window {
+      left: 52%;
+      top: 24%;
+      width: 18%;
+      height: 24%;
+      background:
+        linear-gradient(180deg, #2f4c6b, #1d2f44 65%),
+        #24384f;
+      border: 4px solid #3c5369;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+    }
+    .window::before,
+    .window::after {
+      content: "";
+      position: absolute;
+      background: rgba(205, 226, 245, 0.2);
+    }
+    .window::before { left: 49%; top: 0; width: 2%; height: 100%; }
+    .window::after { top: 49%; left: 0; width: 100%; height: 2%; }
+    .lamp {
+      left: 72%;
+      top: 8%;
+      width: 9%;
+      height: 26%;
+      border-radius: 0;
+      background: none;
+    }
+    .lamp::before {
+      content: "";
+      position: absolute;
+      left: 48%;
+      top: 0;
+      width: 4%;
+      height: 38%;
+      background: #69788a;
+    }
+    .lamp::after {
+      content: "";
+      position: absolute;
+      left: 12%;
+      top: 34%;
+      width: 76%;
+      height: 36%;
+      background: #d2b483;
+      clip-path: polygon(8% 0, 92% 0, 100% 100%, 0 100%);
+      box-shadow: 0 0 36px rgba(245, 219, 158, 0.26);
+    }
+    .desk {
+      left: 16%;
+      top: 56%;
+      width: 36%;
+      height: 28%;
+      background: linear-gradient(180deg, #5f4634, #453022);
+      border: 2px solid #2b1f16;
+      box-shadow: inset 0 -10px 0 rgba(0, 0, 0, 0.16);
+    }
+    .desk::before {
+      content: "";
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      top: 8%;
+      height: 18%;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 4px;
+    }
+    .drawer {
+      left: 24%;
+      top: 66%;
+      width: 16%;
+      height: 10%;
+      background: linear-gradient(180deg, #4a3326, #332217);
+      border: 2px solid #24180f;
+      box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.2);
+    }
+    .drawer::after {
+      content: "";
+      position: absolute;
+      left: 44%;
+      top: 35%;
+      width: 12%;
+      height: 32%;
+      border-radius: 999px;
+      background: #94a7ba;
+    }
+    .door {
+      right: 6%;
+      top: 26%;
+      width: 20%;
+      height: 58%;
+      background: linear-gradient(90deg, #3c4552, #2b323d);
+      border-radius: 2px;
+      border: 2px solid #222a33;
+    }
+    .door .handle {
+      position: absolute;
+      left: 20%;
+      top: 50%;
+      width: 15%;
+      height: 8%;
+      border-radius: 999px;
+      background: #aebfd1;
+    }
+    .door .keypad {
+      position: absolute;
+      left: 64%;
+      top: 40%;
+      width: 22%;
+      height: 22%;
+      background: #141c26;
+      border: 1px solid #4e667f;
+      border-radius: 4px;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    }
+    .door .keypad::before {
+      content: "";
+      position: absolute;
+      left: 22%;
+      top: 18%;
+      width: 56%;
+      height: 10%;
+      background: #4b6f94;
+      box-shadow:
+        0 16px 0 #2b3d4f,
+        0 32px 0 #2b3d4f,
+        0 48px 0 #2b3d4f;
+    }
+    .clock {
+      left: 12%;
+      top: 16%;
+      width: 12%;
+      height: 18%;
+      background: #e9eef6;
+      border-radius: 50%;
+      border: 3px solid #a6b5c6;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+    }
+    .clock .hand {
+      position: absolute;
+      left: 50%;
+      bottom: 50%;
+      width: 4%;
+      transform-origin: bottom center;
+      background: #1d2a3a;
+      border-radius: 4px;
+    }
+    .clock .hand.h { height: 24%; transform: translateX(-50%) rotate(270deg); }
+    .clock .hand.m { height: 34%; transform: translateX(-50%) rotate(150deg); }
+    .calendar {
+      left: 34%;
+      top: 14%;
+      width: 11%;
+      height: 20%;
+      background: #f3f6fa;
+      color: #1d2a3a;
+      border: 2px solid #d0dae5;
+      text-align: center;
+      padding-top: 7%;
+    }
+    .calendar .m {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: #6f7f90;
+    }
+    .calendar .d {
+      display: block;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .flags {
+      left: 57%;
+      top: 11%;
+      width: 18%;
+      height: 11%;
+      background: transparent;
+    }
+    .flags::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 3px;
+      background: #9eb4c8;
+    }
+    .flags::after {
+      content: "";
+      position: absolute;
+      left: 8%;
+      top: 3px;
+      width: 84%;
+      height: 70%;
+      background:
+        conic-gradient(from 0deg, #db6f6f 0 33%, #f1c66b 0 66%, #76c6a4 0 100%);
+      clip-path: polygon(0 0, 18% 0, 9% 100%, 38% 0, 56% 0, 47% 100%, 76% 0, 94% 0, 85% 100%);
+    }
+    .fuse-box {
+      left: 70%;
+      top: 50%;
+      width: 10%;
+      height: 14%;
+      background: linear-gradient(180deg, #657285, #4e596a);
+      border: 2px solid #3e4755;
+    }
+    .fuse-box::before {
+      content: "";
+      position: absolute;
+      left: 20%;
+      top: 30%;
+      width: 16%;
+      height: 16%;
+      border-radius: 50%;
+      background: #9f3f3f;
+      box-shadow: 30px 0 0 #8aa556;
+    }
+    .note {
+      left: 50%;
+      top: 63%;
+      width: 12%;
+      height: 14%;
+      background: #d7bf8e;
+      transform: rotate(-8deg);
+      border: 1px solid #b39a6a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #4b3d21;
+      font-weight: 600;
+    }
     .sidebar {
       border: 2px solid #2d3f56;
       border-radius: 12px;
@@ -155,14 +394,16 @@
 <body>
   <div class="game">
     <section class="scene">
+      <div class="obj window"></div>
+      <div class="obj lamp"></div>
       <div class="obj desk"></div>
       <div class="obj drawer"></div>
-      <div class="obj door"></div>
-      <div class="obj clock"></div>
-      <div class="obj calendar"></div>
+      <div class="obj door"><span class="handle"></span><span class="keypad"></span></div>
+      <div class="obj clock"><span class="hand h"></span><span class="hand m"></span></div>
+      <div class="obj calendar"><span class="m">JUN</span><span class="d">14</span></div>
       <div class="obj flags"></div>
       <div class="obj fuse-box"></div>
-      <div class="obj note"></div>
+      <div class="obj note">14+25</div>
 
       <button class="spot" style="left:10%;top:12%;width:16%;height:23%" data-action="clock"></button>
       <button class="spot" style="left:32%;top:12%;width:14%;height:24%" data-action="calendar"></button>
