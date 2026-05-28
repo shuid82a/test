@@ -3,346 +3,365 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>解密逃脱</title>
+  <title>老板下班后 · 办公室逃脱</title>
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
       min-height: 100vh;
       font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-      background: radial-gradient(circle at 20% 10%, #233044, #101722 55%, #0a0e14);
-      color: #e9eef6;
+      background: radial-gradient(circle at 20% 0, #2d4259, #0f1a26 60%, #0a111a);
+      color: #e8f0fa;
+      padding: 14px;
       display: flex;
       justify-content: center;
-      padding: 16px;
     }
     .game {
-      width: min(1000px, 100%);
+      width: min(1120px, 100%);
       display: grid;
-      grid-template-columns: 1fr 280px;
+      grid-template-columns: 1fr 320px;
       gap: 14px;
     }
+    .scene-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
+    }
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid #335072;
+      background: rgba(16, 27, 40, 0.9);
+      font-size: 13px;
+    }
+    .pill {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #18293b;
+      border: 1px solid #3f6286;
+      color: #cde4ff;
+    }
+    .danger-btn {
+      margin-left: auto;
+      border: 1px solid #9e4a4a;
+      color: #ffdede;
+      background: #4b2020;
+      border-radius: 8px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .danger-btn:hover { background: #6a2b2b; }
     .scene {
       position: relative;
       aspect-ratio: 16 / 10;
-      border: 2px solid #2d3f56;
-      border-radius: 12px;
+      border-radius: 14px;
+      border: 2px solid #335072;
       overflow: hidden;
       background:
-        radial-gradient(circle at 72% 18%, rgba(255, 243, 190, 0.13), transparent 26%),
-        linear-gradient(#1a2636 0 22%, #2b3b4f 22% 28%, #37485f 28% 72%, #2a3b52 72% 100%);
+        radial-gradient(circle at 68% 20%, rgba(255, 241, 189, 0.2), transparent 28%),
+        linear-gradient(#1d2d3e 0 25%, #41546c 25% 70%, #2a3a4e 70% 100%);
       box-shadow: 0 16px 30px rgba(0, 0, 0, 0.35);
     }
     .scene::before {
       content: "";
       position: absolute;
-      inset: 28% 0 0;
-      background:
-        repeating-linear-gradient(
-          90deg,
-          rgba(255, 255, 255, 0.03) 0 22px,
-          rgba(0, 0, 0, 0.04) 22px 44px
-        );
-      opacity: 0.35;
+      inset: 70% 0 0;
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.03) 0 24px,
+        rgba(0, 0, 0, 0.04) 24px 48px
+      );
       pointer-events: none;
     }
-    .spot {
-      position: absolute;
-      border: 2px dashed transparent;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .spot:hover { border-color: rgba(166, 215, 255, 0.55); background: rgba(166, 215, 255, 0.1); }
-    .label {
-      position: absolute;
-      bottom: 8px;
-      left: 10px;
-      font-size: 12px;
-      color: #9bb7d4;
-      opacity: 0.9;
-      pointer-events: none;
-    }
-    .obj {
-      position: absolute;
-      border-radius: 8px;
-      opacity: 0.95;
-      pointer-events: none;
-    }
-    .window {
-      left: 52%;
-      top: 24%;
-      width: 18%;
-      height: 24%;
-      background:
-        linear-gradient(180deg, #2f4c6b, #1d2f44 65%),
-        #24384f;
-      border: 4px solid #3c5369;
-      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.08);
-      border-radius: 4px;
-    }
-    .window::before,
-    .window::after {
-      content: "";
-      position: absolute;
-      background: rgba(205, 226, 245, 0.2);
-    }
-    .window::before { left: 49%; top: 0; width: 2%; height: 100%; }
-    .window::after { top: 49%; left: 0; width: 100%; height: 2%; }
-    .lamp {
-      left: 72%;
-      top: 8%;
-      width: 9%;
-      height: 26%;
-      border-radius: 0;
-      background: none;
-    }
-    .lamp::before {
-      content: "";
-      position: absolute;
-      left: 48%;
-      top: 0;
-      width: 4%;
-      height: 38%;
-      background: #69788a;
-    }
-    .lamp::after {
-      content: "";
-      position: absolute;
-      left: 12%;
-      top: 34%;
-      width: 76%;
-      height: 36%;
-      background: #d2b483;
-      clip-path: polygon(8% 0, 92% 0, 100% 100%, 0 100%);
-      box-shadow: 0 0 36px rgba(245, 219, 158, 0.26);
-    }
+    .obj { position: absolute; pointer-events: none; }
     .desk {
-      left: 16%;
-      top: 56%;
-      width: 36%;
-      height: 28%;
-      background: linear-gradient(180deg, #5f4634, #453022);
-      border: 2px solid #2b1f16;
-      box-shadow: inset 0 -10px 0 rgba(0, 0, 0, 0.16);
+      left: 18%;
+      top: 55%;
+      width: 43%;
+      height: 30%;
+      background: linear-gradient(180deg, #6e4e35, #4b3425);
+      border: 2px solid #2d1f15;
+      border-radius: 8px;
     }
     .desk::before {
       content: "";
       position: absolute;
       left: 8%;
       right: 8%;
-      top: 8%;
+      top: 9%;
       height: 18%;
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.08);
       border-radius: 4px;
     }
-    .drawer {
-      left: 24%;
-      top: 66%;
-      width: 16%;
-      height: 10%;
-      background: linear-gradient(180deg, #4a3326, #332217);
-      border: 2px solid #24180f;
-      box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.2);
-    }
-    .drawer::after {
-      content: "";
-      position: absolute;
-      left: 44%;
-      top: 35%;
-      width: 12%;
-      height: 32%;
-      border-radius: 999px;
-      background: #94a7ba;
-    }
-    .door {
-      right: 6%;
-      top: 26%;
+    .monitor {
+      left: 26%;
+      top: 38%;
       width: 20%;
-      height: 58%;
-      background: linear-gradient(90deg, #3c4552, #2b323d);
-      border-radius: 2px;
-      border: 2px solid #222a33;
+      height: 16%;
+      background: #0f1a26;
+      border: 6px solid #111;
+      border-radius: 6px;
+      box-shadow: inset 0 0 0 2px #2e4f71;
     }
-    .door .handle {
+    .monitor::before {
+      content: "STANDBY";
       position: absolute;
-      left: 20%;
-      top: 50%;
-      width: 15%;
-      height: 8%;
-      border-radius: 999px;
-      background: #aebfd1;
+      right: 8%;
+      bottom: 8%;
+      color: #5f8dbb;
+      font-size: 10px;
+      letter-spacing: 1px;
     }
-    .door .keypad {
-      position: absolute;
-      left: 64%;
-      top: 40%;
-      width: 22%;
-      height: 22%;
-      background: #141c26;
-      border: 1px solid #4e667f;
+    .keyboard {
+      left: 29%;
+      top: 56%;
+      width: 16%;
+      height: 5%;
+      background: #2a323e;
       border-radius: 4px;
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+      border: 1px solid #516173;
     }
-    .door .keypad::before {
+    .drawer-left, .drawer-right {
+      top: 66%;
+      width: 14%;
+      height: 11%;
+      background: linear-gradient(180deg, #553b2a, #3f2a1e);
+      border: 2px solid #24180f;
+      border-radius: 6px;
+    }
+    .drawer-left { left: 22%; }
+    .drawer-right { left: 39%; }
+    .drawer-left::after, .drawer-right::after {
       content: "";
       position: absolute;
-      left: 22%;
-      top: 18%;
-      width: 56%;
-      height: 10%;
-      background: #4b6f94;
-      box-shadow:
-        0 16px 0 #2b3d4f,
-        0 32px 0 #2b3d4f,
-        0 48px 0 #2b3d4f;
+      left: 46%;
+      top: 36%;
+      width: 10%;
+      height: 28%;
+      border-radius: 999px;
+      background: #9db3c8;
+    }
+    .bookcase {
+      left: 3%;
+      top: 31%;
+      width: 13%;
+      height: 48%;
+      background: linear-gradient(180deg, #44515f, #303a47);
+      border: 2px solid #27313d;
+      border-radius: 6px;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.06);
+    }
+    .bookcase::before {
+      content: "";
+      position: absolute;
+      inset: 8% 10%;
+      background: linear-gradient(
+        90deg,
+        #8e5f5f 0 25%,
+        #6f8b4e 25% 55%,
+        #4f7f9e 55% 100%
+      );
+      opacity: 0.8;
+    }
+    .plant {
+      right: 29%;
+      top: 57%;
+      width: 9%;
+      height: 19%;
+      background: #7f5f41;
+      border-radius: 0 0 10px 10px;
+      border: 2px solid #5d452f;
+    }
+    .plant::before {
+      content: "";
+      position: absolute;
+      left: 15%;
+      top: -40%;
+      width: 70%;
+      height: 50%;
+      background: radial-gradient(circle at 40% 40%, #78bf7c, #4a9155);
+      border-radius: 50%;
     }
     .clock {
-      left: 12%;
-      top: 16%;
-      width: 12%;
-      height: 18%;
-      background: #e9eef6;
+      left: 20%;
+      top: 13%;
+      width: 10%;
+      height: 16%;
       border-radius: 50%;
-      border: 3px solid #a6b5c6;
-      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+      border: 3px solid #a4b8cc;
+      background: #f0f5fb;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.6);
     }
-    .clock .hand {
+    .clock::before {
+      content: "";
       position: absolute;
-      left: 50%;
-      bottom: 50%;
-      width: 4%;
-      transform-origin: bottom center;
-      background: #1d2a3a;
-      border-radius: 4px;
+      left: 49%;
+      top: 23%;
+      width: 3%;
+      height: 28%;
+      background: #1c2a39;
     }
-    .clock .hand.h { height: 24%; transform: translateX(-50%) rotate(270deg); }
-    .clock .hand.m { height: 34%; transform: translateX(-50%) rotate(150deg); }
+    .clock::after {
+      content: "";
+      position: absolute;
+      left: 49%;
+      top: 24%;
+      width: 36%;
+      height: 3%;
+      transform-origin: left center;
+      transform: rotate(180deg);
+      background: #1c2a39;
+    }
     .calendar {
       left: 34%;
-      top: 14%;
-      width: 11%;
-      height: 20%;
-      background: #f3f6fa;
-      color: #1d2a3a;
-      border: 2px solid #d0dae5;
+      top: 12%;
+      width: 10%;
+      height: 18%;
+      border: 2px solid #d0d9e2;
+      border-radius: 4px;
+      background: #f5f8fc;
+      color: #122033;
       text-align: center;
-      padding-top: 7%;
-    }
-    .calendar .m {
-      display: block;
-      font-size: 11px;
-      letter-spacing: 1px;
-      color: #6f7f90;
-    }
-    .calendar .d {
-      display: block;
-      font-size: 28px;
+      padding-top: 4%;
       font-weight: 700;
       line-height: 1.2;
     }
-    .flags {
-      left: 57%;
-      top: 11%;
-      width: 18%;
-      height: 11%;
-      background: transparent;
+    .calendar span { display: block; }
+    .calendar .day { font-size: 26px; color: #c23d3d; }
+    .frame {
+      left: 50%;
+      top: 14%;
+      width: 14%;
+      height: 17%;
+      border: 4px solid #85694a;
+      border-radius: 4px;
+      background: linear-gradient(135deg, #6a8cad, #3f5d79);
     }
-    .flags::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 3px;
-      background: #9eb4c8;
-    }
-    .flags::after {
-      content: "";
-      position: absolute;
-      left: 8%;
-      top: 3px;
-      width: 84%;
-      height: 70%;
-      background:
-        conic-gradient(from 0deg, #db6f6f 0 33%, #f1c66b 0 66%, #76c6a4 0 100%);
-      clip-path: polygon(0 0, 18% 0, 9% 100%, 38% 0, 56% 0, 47% 100%, 76% 0, 94% 0, 85% 100%);
-    }
-    .fuse-box {
-      left: 70%;
+    .coffee {
+      right: 18%;
       top: 50%;
       width: 10%;
-      height: 14%;
-      background: linear-gradient(180deg, #657285, #4e596a);
-      border: 2px solid #3e4755;
+      height: 22%;
+      border-radius: 8px;
+      border: 2px solid #26313f;
+      background: linear-gradient(180deg, #6b7887, #4e5a68);
     }
-    .fuse-box::before {
+    .coffee::before {
       content: "";
       position: absolute;
       left: 20%;
-      top: 30%;
-      width: 16%;
-      height: 16%;
+      top: 18%;
+      width: 60%;
+      height: 8%;
+      border-radius: 2px;
+      background: #233346;
+      box-shadow: 0 18px 0 #233346, 0 36px 0 #233346;
+    }
+    .safe {
+      right: 6%;
+      top: 35%;
+      width: 11%;
+      height: 20%;
+      border-radius: 6px;
+      border: 3px solid #2a3644;
+      background: linear-gradient(180deg, #545f6d, #424d59);
+    }
+    .safe::before {
+      content: "";
+      position: absolute;
+      left: 20%;
+      top: 26%;
+      width: 60%;
+      height: 50%;
       border-radius: 50%;
-      background: #9f3f3f;
-      box-shadow: 30px 0 0 #8aa556;
+      border: 3px solid #9fb2c6;
     }
-    .note {
-      left: 50%;
-      top: 63%;
+    .door {
+      right: 2%;
+      top: 22%;
+      width: 14%;
+      height: 63%;
+      border-radius: 4px;
+      border: 2px solid #202b35;
+      background: linear-gradient(90deg, #3a4452, #2b333f);
+    }
+    .door::before {
+      content: "";
+      position: absolute;
+      left: 16%;
+      top: 48%;
       width: 12%;
-      height: 14%;
-      background: #d7bf8e;
-      transform: rotate(-8deg);
-      border: 1px solid #b39a6a;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      color: #4b3d21;
-      font-weight: 600;
+      height: 4%;
+      border-radius: 999px;
+      background: #b3c5d8;
     }
+    .hotspot {
+      position: absolute;
+      border: 2px dashed transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: .2s;
+      background: transparent;
+    }
+    .hotspot:hover { border-color: rgba(163, 212, 255, 0.55); background: rgba(163, 212, 255, 0.1); }
+    .label {
+      position: absolute;
+      left: 8px;
+      bottom: 8px;
+      font-size: 12px;
+      color: #9fb8d0;
+      pointer-events: none;
+    }
+    .inventory-bar {
+      border: 1px solid #335072;
+      border-radius: 10px;
+      background: rgba(16, 27, 40, 0.9);
+      padding: 10px;
+    }
+    .inventory-title { font-size: 12px; color: #96b2cc; margin-bottom: 8px; }
+    .inventory {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      min-height: 42px;
+    }
+    .item {
+      border: 1px solid #4d7199;
+      background: #1c3248;
+      color: #d8ecff;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .item.active { background: #29557a; border-color: #89c5ff; }
+    .item.empty { opacity: 0.7; cursor: default; }
     .sidebar {
-      border: 2px solid #2d3f56;
-      border-radius: 12px;
+      border: 2px solid #335072;
+      border-radius: 14px;
+      background: rgba(15, 24, 35, 0.94);
       padding: 12px;
-      background: rgba(17, 27, 39, 0.85);
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
-    h1 {
-      margin: 0;
-      font-size: 20px;
-      letter-spacing: 1px;
-    }
-    .muted { margin: 0; color: #90a4bc; font-size: 13px; line-height: 1.5; }
-    .inventory {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      min-height: 48px;
-      padding: 8px;
-      background: #121d2b;
-      border-radius: 8px;
-      border: 1px solid #304258;
-    }
-    .item {
-      padding: 4px 8px;
-      font-size: 12px;
-      border-radius: 999px;
-      background: #284a6a;
-      border: 1px solid #5f8db7;
-    }
+    h1 { margin: 0; font-size: 20px; }
+    .muted { margin: 0; font-size: 13px; line-height: 1.55; color: #9db4ca; }
     .status {
+      border: 1px solid #335072;
+      border-radius: 10px;
+      background: #101a27;
       padding: 10px;
-      border-radius: 8px;
-      background: #121d2b;
-      border: 1px solid #304258;
+      min-height: 96px;
+      line-height: 1.65;
       font-size: 13px;
-      color: #c7d8ea;
-      line-height: 1.6;
-      min-height: 82px;
+      color: #c9daec;
     }
     .btn {
       border: 1px solid #5f8db7;
@@ -354,95 +373,163 @@
       font-size: 13px;
     }
     .btn:hover { background: #2a4c6b; }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
     .modal {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.65);
+      background: rgba(0, 0, 0, 0.7);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 20;
-      padding: 14px;
+      padding: 12px;
     }
     .modal.open { display: flex; }
     .card {
-      width: min(460px, 100%);
+      width: min(520px, 100%);
       background: #162231;
       border: 2px solid #335072;
       border-radius: 12px;
       padding: 16px;
+      max-height: 82vh;
+      overflow: auto;
     }
     .card h2 { margin: 0 0 8px; font-size: 20px; }
-    .card p { margin: 0 0 10px; line-height: 1.7; color: #c7d8ea; }
-    .row { display: flex; gap: 8px; }
-    input[type="text"] {
+    .card p { margin: 0 0 10px; line-height: 1.7; color: #c7d8ea; font-size: 14px; }
+    .row { display: flex; gap: 8px; align-items: center; }
+    .row-wrap { display: flex; gap: 8px; flex-wrap: wrap; }
+    input[type="text"], select {
       flex: 1;
+      min-width: 0;
       padding: 9px 10px;
       border-radius: 8px;
       border: 1px solid #5f8db7;
       background: #101a27;
       color: #eaf4ff;
       font-size: 15px;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
     }
-    .small { font-size: 12px; color: #86a4c2; }
-    @media (max-width: 900px) {
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 25;
+      background: rgba(6, 11, 18, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .overlay.hide { display: none; }
+    .panel {
+      width: min(620px, 100%);
+      border: 2px solid #335072;
+      border-radius: 14px;
+      background: #121d2b;
+      padding: 18px;
+    }
+    .panel h2 { margin: 0 0 8px; }
+    .panel p { color: #adc2d8; line-height: 1.7; font-size: 14px; }
+    .result {
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 8px;
+      background: #0f1723;
+      border: 1px solid #345071;
+      color: #d3e5f9;
+    }
+    @media (max-width: 980px) {
       .game { grid-template-columns: 1fr; }
+      .danger-btn { margin-left: 0; }
     }
   </style>
 </head>
 <body>
+  <div id="startOverlay" class="overlay">
+    <div class="panel">
+      <h2>老板下班后 · 办公室逃脱</h2>
+      <p>
+        目标：破解谜题，打开保险柜拿到 U 盘，再从正门离开。<br>
+        道具使用：先点底部道具，再点场景物体。<br>
+        卡住 2 分钟后可使用“老板便签提示”（最多 3 次）。
+      </p>
+      <div class="row-wrap" style="margin-top:10px">
+        <button class="btn" id="startTimed">限时模式（5分钟）</button>
+        <button class="btn" id="startRelax">轻松模式（不限时）</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="resultOverlay" class="overlay hide">
+    <div class="panel">
+      <h2 id="resultTitle"></h2>
+      <p id="resultText"></p>
+      <button class="btn" id="restartBtn">重新开始</button>
+    </div>
+  </div>
+
   <div class="game">
-    <section class="scene">
-      <div class="obj window"></div>
-      <div class="obj lamp"></div>
-      <div class="obj desk"></div>
-      <div class="obj drawer"></div>
-      <div class="obj door"><span class="handle"></span><span class="keypad"></span></div>
-      <div class="obj clock"><span class="hand h"></span><span class="hand m"></span></div>
-      <div class="obj calendar"><span class="m">JUN</span><span class="d">14</span></div>
-      <div class="obj flags"></div>
-      <div class="obj fuse-box"></div>
-      <div class="obj note">14+25</div>
+    <section class="scene-wrap">
+      <div class="topbar">
+        <span class="pill">目标：拿到 U 盘并逃离</span>
+        <span class="pill" id="timerPill">时间：--:--</span>
+        <span class="pill">提示剩余：<b id="hintCount">3</b></span>
+        <button class="danger-btn" id="alarmBtn">误触警报（老板提前回来）</button>
+      </div>
 
-      <button class="spot" style="left:10%;top:12%;width:16%;height:23%" data-action="clock"></button>
-      <button class="spot" style="left:32%;top:12%;width:14%;height:24%" data-action="calendar"></button>
-      <button class="spot" style="left:56%;top:10%;width:20%;height:14%" data-action="flags"></button>
-      <button class="spot" style="left:22%;top:64%;width:20%;height:14%" data-action="drawer"></button>
-      <button class="spot" style="left:48%;top:61%;width:14%;height:17%" data-action="note"></button>
-      <button class="spot" style="left:68%;top:48%;width:14%;height:19%" data-action="fuse"></button>
-      <button class="spot" style="left:74%;top:24%;width:22%;height:62%" data-action="door"></button>
+      <section class="scene">
+        <div class="obj desk"></div>
+        <div class="obj monitor"></div>
+        <div class="obj keyboard"></div>
+        <div class="obj drawer-left"></div>
+        <div class="obj drawer-right"></div>
+        <div class="obj bookcase"></div>
+        <div class="obj plant"></div>
+        <div class="obj clock"></div>
+        <div class="obj calendar"><span>JUN</span><span class="day">15</span></div>
+        <div class="obj frame"></div>
+        <div class="obj coffee"></div>
+        <div class="obj safe"></div>
+        <div class="obj door"></div>
 
-      <div class="label">点击场景中的物品，寻找线索并解锁门禁</div>
+        <button class="hotspot" style="left:24%;top:36%;width:24%;height:21%" data-spot="monitor" title="电脑显示器"></button>
+        <button class="hotspot" style="left:28%;top:54%;width:18%;height:9%" data-spot="keyboard" title="键盘"></button>
+        <button class="hotspot" style="left:20%;top:64%;width:16%;height:15%" data-spot="drawerLeft" title="左抽屉"></button>
+        <button class="hotspot" style="left:36%;top:64%;width:18%;height:15%" data-spot="drawerRight" title="右抽屉"></button>
+        <button class="hotspot" style="left:2%;top:29%;width:15%;height:53%" data-spot="bookcase" title="书柜"></button>
+        <button class="hotspot" style="left:61%;top:56%;width:12%;height:22%" data-spot="plant" title="花盆"></button>
+        <button class="hotspot" style="left:19%;top:12%;width:12%;height:18%" data-spot="clock" title="挂钟"></button>
+        <button class="hotspot" style="left:33%;top:11%;width:12%;height:20%" data-spot="calendar" title="日历"></button>
+        <button class="hotspot" style="left:49%;top:13%;width:16%;height:19%" data-spot="frame" title="画框"></button>
+        <button class="hotspot" style="left:72%;top:49%;width:12%;height:24%" data-spot="coffee" title="咖啡机"></button>
+        <button class="hotspot" style="left:84%;top:34%;width:12%;height:23%" data-spot="safe" title="保险柜"></button>
+        <button class="hotspot" style="left:86%;top:21%;width:14%;height:65%" data-spot="door" title="大门"></button>
+        <div class="label">点击场景探索，使用道具解谜（幽默提示：老板真的很爱咖啡）</div>
+      </section>
+
+      <div class="inventory-bar">
+        <div class="inventory-title">道具栏（先点道具，再点场景）：</div>
+        <div class="inventory" id="inventory"></div>
+      </div>
     </section>
 
     <aside class="sidebar">
-      <h1>午夜办公室</h1>
-      <p class="muted">你被困在办公室。解开线索，找到保险丝，为门禁通电并输入正确密码逃出。</p>
+      <h1>办公室逃脱</h1>
+      <p class="muted">
+        线索链：电脑 → 日历(第一码) → 订书机拿磁铁 → 磁力开左抽屉 → 书柜找第二码 →
+        花盆便签 + 咖啡机(第三码) → 保险柜(526) → 拿 U 盘开门。
+      </p>
 
-      <div>
-        <p class="muted" style="margin-bottom:6px">背包</p>
-        <div id="inventory" class="inventory"></div>
-      </div>
-
-      <div>
-        <p class="muted" style="margin-bottom:6px">当前状态</p>
-        <div id="status" class="status">先四处看看，找到抽屉密码线索。</div>
-      </div>
-
-      <button class="btn" id="restartBtn">重新开始</button>
-      <p class="small">解密流程：线索 → 抽屉密码(3位) → 保险丝 → 门禁密码(4位)</p>
+      <div class="status" id="status">游戏开始后，先点击电脑显示器。</div>
+      <button class="btn" id="hintBtn">老板便签提示</button>
+      <button class="btn" id="clearSelectBtn">取消道具选择</button>
     </aside>
   </div>
 
   <div id="modal" class="modal">
     <div class="card">
       <h2 id="modalTitle"></h2>
-      <p id="modalText"></p>
-      <div id="modalInput" class="row" style="display:none">
-        <input type="text" id="codeInput" maxlength="6" autocomplete="off" />
-        <button class="btn" id="submitCodeBtn">确认</button>
-      </div>
+      <div id="modalBody"></div>
       <div class="row" style="justify-content:flex-end;margin-top:8px">
         <button class="btn" id="closeModalBtn">关闭</button>
       </div>
@@ -451,177 +538,463 @@
 
   <script>
     const state = {
+      playing: false,
+      timedMode: false,
+      timeLeft: 300,
       inventory: [],
-      drawerUnlocked: false,
-      fuseInstalled: false,
+      selectedItem: null,
+      hintsLeft: 3,
+      lastProgressAt: Date.now(),
+      clue1: null,
+      clue2: null,
+      clue3: null,
+      monitorMoved: false,
+      keyboardDone: false,
+      rightDrawerOpened: false,
+      staplerChecked: false,
+      leftDrawerUnlocked: false,
+      leftDrawerLooted: false,
+      bookcaseUnlocked: false,
+      secondCodeSolved: false,
+      plantChecked: false,
+      coffeeSolved: false,
+      frameChecked: false,
+      safeOpened: false,
+      bossReturned: false,
       escaped: false,
-      currentInputType: null, // drawer | door
     };
 
     const inventoryEl = document.getElementById("inventory");
     const statusEl = document.getElementById("status");
+    const hintCountEl = document.getElementById("hintCount");
+    const timerPill = document.getElementById("timerPill");
     const modalEl = document.getElementById("modal");
     const modalTitleEl = document.getElementById("modalTitle");
-    const modalTextEl = document.getElementById("modalText");
-    const modalInputEl = document.getElementById("modalInput");
-    const codeInputEl = document.getElementById("codeInput");
+    const modalBodyEl = document.getElementById("modalBody");
+
+    let timerHandle = null;
 
     function setStatus(text) {
       statusEl.textContent = text;
     }
 
-    function renderInventory() {
-      inventoryEl.innerHTML = "";
-      if (state.inventory.length === 0) {
-        inventoryEl.innerHTML = '<span class="small">（空）</span>';
-        return;
-      }
-      state.inventory.forEach(item => {
-        const tag = document.createElement("span");
-        tag.className = "item";
-        tag.textContent = item;
-        inventoryEl.appendChild(tag);
-      });
+    function markProgress(text) {
+      state.lastProgressAt = Date.now();
+      if (text) setStatus(text);
     }
 
-    function hasItem(name) {
-      return state.inventory.includes(name);
+    function hasItem(id) {
+      return state.inventory.some(i => i.id === id);
     }
 
-    function addItem(name) {
-      if (!hasItem(name)) {
-        state.inventory.push(name);
-        renderInventory();
-      }
+    function addItem(id, name, desc = "") {
+      if (hasItem(id)) return;
+      state.inventory.push({ id, name, desc });
+      renderInventory();
+      markProgress("获得道具：" + name);
     }
 
-    function removeItem(name) {
-      state.inventory = state.inventory.filter(i => i !== name);
+    function removeItem(id) {
+      state.inventory = state.inventory.filter(i => i.id !== id);
+      if (state.selectedItem === id) state.selectedItem = null;
       renderInventory();
     }
 
-    function openModal(title, text, inputType = null) {
-      modalTitleEl.textContent = title;
-      modalTextEl.textContent = text;
-      state.currentInputType = inputType;
-      if (inputType) {
-        modalInputEl.style.display = "flex";
-        codeInputEl.value = "";
-        codeInputEl.focus();
+    function renderInventory() {
+      inventoryEl.innerHTML = "";
+      if (state.inventory.length === 0) {
+        const empty = document.createElement("span");
+        empty.className = "item empty";
+        empty.textContent = "（空）";
+        inventoryEl.appendChild(empty);
       } else {
-        modalInputEl.style.display = "none";
+        state.inventory.forEach(it => {
+          const btn = document.createElement("button");
+          btn.className = "item" + (state.selectedItem === it.id ? " active" : "");
+          btn.textContent = it.name;
+          btn.onclick = () => selectItem(it.id);
+          inventoryEl.appendChild(btn);
+        });
       }
+      hintCountEl.textContent = String(state.hintsLeft);
+    }
+
+    function selectItem(id) {
+      if (state.selectedItem === id) {
+        // 连点同一道具触发检查动作
+        if (id === "stapler" && !state.staplerChecked) {
+          state.staplerChecked = true;
+          addItem("magnet", "磁铁", "从订书机底部拆下来的小磁铁");
+          openModal("订书机检查", "<p>你把订书机翻过来，发现底部藏着一块小磁铁。</p>");
+          return;
+        }
+        const item = state.inventory.find(i => i.id === id);
+        openModal(item.name, "<p>" + (item.desc || "普通道具。也许能和场景中的某个物体互动。") + "</p>");
+        return;
+      }
+      state.selectedItem = id;
+      renderInventory();
+      const item = state.inventory.find(i => i.id === id);
+      setStatus("已选中道具：" + item.name + "。现在点击场景中的物体使用。");
+    }
+
+    function clearSelect() {
+      state.selectedItem = null;
+      renderInventory();
+      setStatus("已取消道具选择。");
+    }
+
+    function useOnSpot(spot) {
+      const item = state.selectedItem;
+      if (!item) return false;
+
+      // 左抽屉：磁铁开锁（幽默）
+      if (spot === "drawerLeft" && item === "magnet" && !state.leftDrawerUnlocked) {
+        state.leftDrawerUnlocked = true;
+        openModal("磁力开锁", "<p>你把磁铁贴在锁孔旁边，抽屉“咔哒”一声自己弹开了。老板这锁也太敷衍了。</p>");
+        clearSelect();
+        markProgress("左抽屉解锁了，里面也许有关键物品。");
+        return true;
+      }
+
+      // 书柜：小钥匙开门
+      if (spot === "bookcase" && item === "smallKey" && !state.bookcaseUnlocked) {
+        state.bookcaseUnlocked = true;
+        openModal("书柜开启", "<p>小钥匙正好能开书柜玻璃门。</p>");
+        clearSelect();
+        markProgress("书柜已开启，查看三本书。");
+        return true;
+      }
+
+      // 其他不匹配
+      setStatus("这个道具和这里好像不匹配。");
+      return true;
+    }
+
+    function openModal(title, bodyHtml) {
+      modalTitleEl.textContent = title;
+      modalBodyEl.innerHTML = bodyHtml;
       modalEl.classList.add("open");
     }
 
     function closeModal() {
       modalEl.classList.remove("open");
-      state.currentInputType = null;
     }
 
-    function handleSpot(action) {
-      if (state.escaped) return;
+    function openCodeInput(title, prompt, maxLen, onSubmit) {
+      openModal(title, `
+        <p>${prompt}</p>
+        <div class="row">
+          <input id="codeInput" maxlength="${maxLen}" autocomplete="off" />
+          <button class="btn" id="codeSubmitBtn">确认</button>
+        </div>
+      `);
+      const input = document.getElementById("codeInput");
+      const btn = document.getElementById("codeSubmitBtn");
+      const submit = () => onSubmit(input.value.trim());
+      btn.onclick = submit;
+      input.addEventListener("keydown", e => {
+        if (e.key === "Enter") submit();
+      });
+      input.focus();
+    }
 
-      switch (action) {
-        case "clock":
-          openModal("挂钟", "挂钟停在 09:25。秒针不动。");
-          setStatus("你记下了时间：09:25。");
+    function interact(spot) {
+      if (!state.playing || state.escaped || state.bossReturned) return;
+      if (useOnSpot(spot)) return;
+
+      switch (spot) {
+        case "monitor":
+          if (!state.monitorMoved) {
+            state.monitorMoved = true;
+            openModal("电脑显示器", "<p>屏幕显示：<b>“别盯着看，密码就在我下面。”</b></p><p>你抬起显示器，底座下压着纸条：<b>第一码：日历上被圈出的日子（取个位）</b></p>");
+            markProgress("线索到手：去看日历。");
+          } else {
+            openModal("电脑显示器", "<p>待机画面还亮着。底座下的纸条已经被你记下。</p>");
+          }
           break;
+
+        case "keyboard":
+          if (!state.keyboardDone) {
+            state.keyboardDone = true;
+            openModal("键盘", "<p>你随手按了几下，屏幕角落闪出一句：<b>COFFEE ≠ CHAOS</b>。</p><p>看起来“咖啡”确实是关键主题。</p>");
+            markProgress("获得提示：老板线索与咖啡有关。");
+          } else {
+            openModal("键盘", "<p>键盘没别的反应了。</p>");
+          }
+          break;
+
         case "calendar":
-          openModal("台历", "日期停在 6 月 14 日。今天应该就是这一天。");
-          setStatus("你记下了日期：14。");
+          if (!state.monitorMoved) {
+            openModal("日历", "<p>今天是 15 号，但你还不知道它和密码有什么关系。</p>");
+            setStatus("先看电脑显示器，可能有提示。");
+            return;
+          }
+          if (!state.clue1) {
+            state.clue1 = 5;
+            openModal("日历", "<p>15号被红笔圈出。按纸条规则取个位：<b>第一码 = 5</b></p>");
+            markProgress("第一位密码确定：5。");
+          } else {
+            openModal("日历", "<p>被圈出的依然是 15 号。第一码你已经知道是 5。</p>");
+          }
           break;
-        case "flags":
-          openModal("墙上的三角旗", "墙上挂着 2 面小三角旗。");
-          setStatus("你记下了旗子数量：2。");
+
+        case "drawerRight":
+          if (!state.rightDrawerOpened) {
+            state.rightDrawerOpened = true;
+            addItem("stapler", "订书机", "普通订书机，看起来有点重，可能藏了东西。");
+            openModal("右抽屉", "<p>右抽屉没上锁。你找到一个订书机。</p><p>提示：在道具栏点击“订书机”两次可检查它。</p>");
+          } else {
+            openModal("右抽屉", "<p>里面空了。你已经拿走了订书机。</p>");
+          }
           break;
-        case "note":
-          openModal("便签纸", "便签写着：\n最终门禁密码 = 日期两位 + 分钟两位");
-          setStatus("门禁密码规则已获取。");
+
+        case "drawerLeft":
+          if (!state.leftDrawerUnlocked) {
+            openModal("左抽屉（上锁）", "<p>锁住了。锁孔旁边有一点金属结构，像是老板图便宜买的磁吸锁。</p>");
+            setStatus("试试在道具栏选中“磁铁”后再点左抽屉。");
+            return;
+          }
+          if (!state.leftDrawerLooted) {
+            state.leftDrawerLooted = true;
+            addItem("smallKey", "小钥匙", "可用于开启某个上锁玻璃门。");
+            addItem("halfPaper", "半张密码纸", "写着：第二码 = 书柜里某本书页数。旁边画了咖啡杯图标。");
+            openModal("左抽屉内容", "<p>你拿到一把小钥匙和半张密码纸。</p><p>纸上写着：<b>第二码 = 书柜里某本书页数</b>，并画了咖啡杯图标。</p>");
+            markProgress("去书柜找“咖啡相关”书页。");
+          } else {
+            openModal("左抽屉", "<p>你已经把里面有用的东西拿走了。</p>");
+          }
           break;
-        case "drawer":
-          if (state.drawerUnlocked) {
-            openModal("抽屉", hasItem("保险丝") ? "抽屉是空的。" : "抽屉里有一个保险丝。");
-            if (!hasItem("保险丝")) {
-              addItem("保险丝");
-              setStatus("你拿到了保险丝。去配电盒安装它。");
+
+        case "bookcase":
+          if (!state.bookcaseUnlocked) {
+            openModal("书柜（玻璃门上锁）", "<p>柜门锁住了。也许左抽屉里那把小钥匙能用。</p>");
+            return;
+          }
+          openModal("书柜", `
+            <p>三本书摆在里面。老板似乎很在意“页数”。</p>
+            <div class="row-wrap">
+              <button class="btn" data-book="excel">《Excel高级技巧》翻到第3页</button>
+              <button class="btn" data-book="team">《团队管理心法》翻到第7页</button>
+              <button class="btn" data-book="coffee">《咖啡的101种喝法》翻到第2页</button>
+            </div>
+          `);
+          document.querySelectorAll("[data-book]").forEach(btn => {
+            btn.onclick = () => handleBook(btn.dataset.book);
+          });
+          break;
+
+        case "plant":
+          if (!state.plantChecked) {
+            state.plantChecked = true;
+            addItem("waterNote", "防水便签", "写着：第三码去咖啡机验证——2勺糖 + 第4档。");
+            openModal("花盆", "<p>你拨开泥土，找到一张防水便签：</p><p><b>“第三码去咖啡机验证：2勺糖 + 第4档。备用公式：分钟数 - 时针数（取个位）。”</b></p>");
+            markProgress("第三码线索出现：去咖啡机。");
+          } else {
+            openModal("花盆", "<p>泥土里没有新东西了。</p>");
+          }
+          break;
+
+        case "clock":
+          openModal("挂钟", "<p>挂钟停在 <b>4:30</b>。</p><p>如果用便签里的备用公式：30 - 4 = 26，取个位是 6。</p>");
+          if (!state.clue3 && state.plantChecked) {
+            setStatus("你大概知道第三码是 6，但最好去咖啡机做一次确认。");
+          }
+          break;
+
+        case "frame":
+          if (!state.frameChecked) {
+            state.frameChecked = true;
+            openModal("画框背面", "<p>你取下画框，背后写着一串字母：<b>COFFEE</b></p><p>老板真是把咖啡写进 DNA 了。</p>");
+            markProgress("额外线索：咖啡就是关键分支。");
+          } else {
+            openModal("画框", "<p>背面字母还是 COFFEE。</p>");
+          }
+          break;
+
+        case "coffee":
+          openCoffeePanel();
+          break;
+
+        case "safe":
+          if (state.safeOpened) {
+            openModal("保险柜", "<p>保险柜已开，里面空了（U 盘已经在你背包里）。</p>");
+            return;
+          }
+          openCodeInput(
+            "保险柜密码",
+            "请输入 3 位数字密码。",
+            3,
+            code => {
+              if (code === "526") {
+                state.safeOpened = true;
+                addItem("usb", "机密U盘", "老板最怕丢的东西。");
+                openModal("保险柜开启", "<p>保险柜打开了！你拿到了机密 U 盘。</p>");
+                markProgress("最终目标完成一半：拿到 U 盘，去大门。");
+              } else {
+                openModal("密码错误", "<p>保险柜没有打开。请重新组合三位密码。</p>");
+              }
             }
-          } else {
-            openModal(
-              "上锁抽屉",
-              "需要 3 位数密码。\n线索：\n第一位 = 小时数 - 6\n第二位 = 日期个位\n第三位 = 三角旗数量",
-              "drawer"
-            );
-            setStatus("先根据线索算出抽屉密码。");
-          }
+          );
           break;
-        case "fuse":
-          if (state.fuseInstalled) {
-            openModal("配电盒", "保险丝已安装，门禁已通电。");
-            setStatus("门禁已通电，去门口输入密码。");
-          } else if (hasItem("保险丝")) {
-            state.fuseInstalled = true;
-            removeItem("保险丝");
-            openModal("配电盒", "你将保险丝装了进去。\n嗡——门禁面板亮了。");
-            setStatus("很好，门禁已经通电。现在去解门锁密码。");
-          } else {
-            openModal("配电盒", "保险丝缺失，门禁无法通电。");
-            setStatus("你需要先从抽屉拿到保险丝。");
-          }
-          break;
+
         case "door":
-          if (!state.fuseInstalled) {
-            openModal("门禁", "门禁断电，按键没有反应。");
-            setStatus("先给门禁通电。");
-          } else {
-            openModal("门禁", "请输入 4 位门禁密码。", "door");
-            setStatus("根据便签规则：日期两位 + 分钟两位。");
+          if (!hasItem("usb")) {
+            openModal("办公室大门", "<p>门可以打开，但你还没拿到 U 盘。空手离开等于任务失败。</p>");
+            setStatus("先开保险柜拿 U 盘。");
+            return;
           }
+          winGame("你成功拿到机密 U 盘，并赶在老板回来前溜出办公室。任务完成！");
           break;
       }
     }
 
-    function submitCode() {
-      const code = codeInputEl.value.trim();
-      if (!state.currentInputType) return;
-
-      if (state.currentInputType === "drawer") {
-        if (code === "342") {
-          state.drawerUnlocked = true;
-          openModal("解锁成功", "抽屉打开了，里面有一个保险丝。");
-          if (!hasItem("保险丝")) addItem("保险丝");
-          setStatus("抽屉已开，你拿到了保险丝。");
+    function handleBook(book) {
+      if (book === "coffee") {
+        if (!state.secondCodeSolved) {
+          state.secondCodeSolved = true;
+          state.clue2 = 2;
+          openModal("《咖啡的101种喝法》", "<p>第 2 页被折角标记。结合半张密码纸咖啡图标：<b>第二码 = 2</b></p>");
+          markProgress("第二位密码确定：2。");
         } else {
-          openModal("密码错误", "不对，再想想三个线索：09点、14日、2面旗。", "drawer");
-          setStatus("抽屉密码错误。");
+          openModal("《咖啡的101种喝法》", "<p>第 2 页就是关键页，第二码已确认。</p>");
         }
+      } else if (book === "excel") {
+        openModal("《Excel高级技巧》", "<p>第 3 页写的是快捷键。你怀疑这只是干扰项。</p>");
+      } else {
+        openModal("《团队管理心法》", "<p>第 7 页只有一句话：“遇事先喝咖啡”。这老板真离谱。</p>");
       }
+    }
 
-      if (state.currentInputType === "door") {
-        if (code === "1425") {
-          state.escaped = true;
-          openModal("逃脱成功", "门锁发出“滴”的一声，门开了。\n你成功逃出了午夜办公室！");
-          setStatus("恭喜通关！");
+    function openCoffeePanel() {
+      openModal("咖啡机", `
+        <p>你可以设置档位和糖量。也许杯底会给你答案。</p>
+        <div class="row">
+          <label>档位</label>
+          <select id="coffeeLevel">
+            <option value="1">1 档</option>
+            <option value="2">2 档</option>
+            <option value="3">3 档</option>
+            <option value="4">4 档</option>
+            <option value="5">5 档</option>
+          </select>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <label>糖量</label>
+          <select id="coffeeSugar">
+            <option value="0">0 勺</option>
+            <option value="1">1 勺</option>
+            <option value="2">2 勺</option>
+          </select>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn" id="brewBtn">冲泡</button>
+        </div>
+      `);
+      document.getElementById("brewBtn").onclick = () => {
+        const level = document.getElementById("coffeeLevel").value;
+        const sugar = document.getElementById("coffeeSugar").value;
+        if (level === "4" && sugar === "2") {
+          state.coffeeSolved = true;
+          state.clue3 = 6;
+          openModal("咖啡完成", "<p>杯底浮现一个数字：<b>6</b>。第三码确认！</p>");
+          markProgress("第三位密码确定：6。");
         } else {
-          openModal("门禁错误", "门禁发出红色警报。再核对便签规则。", "door");
-          setStatus("门禁密码错误。");
+          openModal("咖啡完成", "<p>味道一般，杯底没出现有用数字。也许参数不对。</p>");
         }
+      };
+    }
+
+    function tryHint() {
+      if (!state.playing) return;
+      if (state.hintsLeft <= 0) {
+        setStatus("提示次数已经用完。");
+        return;
       }
+      const idle = Date.now() - state.lastProgressAt;
+      if (idle < 120000) {
+        const sec = Math.ceil((120000 - idle) / 1000);
+        setStatus("你还没卡住够久。约 " + sec + " 秒后可获得新提示。");
+        return;
+      }
+      state.hintsLeft--;
+      hintCountEl.textContent = String(state.hintsLeft);
+
+      let hint = "";
+      if (!state.monitorMoved) hint = "先看显示器，密码第一条线索在它下面。";
+      else if (state.clue1 == null) hint = "日历上被圈出的日子是第一码，记得取个位。";
+      else if (!hasItem("magnet")) hint = "右抽屉有订书机，检查它底部。";
+      else if (!state.leftDrawerUnlocked) hint = "选中磁铁，去点左抽屉锁孔。";
+      else if (state.clue2 == null) hint = "半张纸上的咖啡杯图标，指向书柜里的咖啡书。";
+      else if (state.clue3 == null) hint = "花盆便签给了咖啡机参数：2勺糖 + 第4档。";
+      else if (!state.safeOpened) hint = "三位密码已经齐了：5、2、6。";
+      else if (!hasItem("usb")) hint = "打开保险柜后记得把 U 盘拿走。";
+      else hint = "你只差最后一步：点击大门离开。";
+
+      setStatus("老板便签提示：" + hint);
+    }
+
+    function updateTimer() {
+      if (!state.playing) return;
+      if (!state.timedMode) {
+        timerPill.textContent = "时间：不限时";
+        return;
+      }
+      const m = Math.floor(state.timeLeft / 60).toString().padStart(2, "0");
+      const s = (state.timeLeft % 60).toString().padStart(2, "0");
+      timerPill.textContent = "倒计时：" + m + ":" + s;
+      if (state.timeLeft <= 0) {
+        failGame("你还在办公室里翻抽屉时，老板提前回来了……任务失败。");
+      }
+      state.timeLeft--;
+    }
+
+    function failGame(text) {
+      if (!state.playing) return;
+      state.playing = false;
+      state.bossReturned = true;
+      clearInterval(timerHandle);
+      document.getElementById("resultTitle").textContent = "失败";
+      document.getElementById("resultText").textContent = text;
+      document.getElementById("resultOverlay").classList.remove("hide");
+    }
+
+    function winGame(text) {
+      if (!state.playing) return;
+      state.playing = false;
+      state.escaped = true;
+      clearInterval(timerHandle);
+      document.getElementById("resultTitle").textContent = "胜利";
+      document.getElementById("resultText").textContent = text;
+      document.getElementById("resultOverlay").classList.remove("hide");
+    }
+
+    function startGame(timed) {
+      state.playing = true;
+      state.timedMode = timed;
+      state.timeLeft = 300;
+      document.getElementById("startOverlay").classList.add("hide");
+      setStatus("游戏开始：先点击电脑显示器。");
+      renderInventory();
+      updateTimer();
+      clearInterval(timerHandle);
+      timerHandle = setInterval(updateTimer, 1000);
     }
 
     function bindEvents() {
-      document.querySelectorAll(".spot").forEach(btn => {
-        btn.addEventListener("click", () => handleSpot(btn.dataset.action));
+      document.querySelectorAll(".hotspot").forEach(btn => {
+        btn.addEventListener("click", () => interact(btn.dataset.spot));
       });
-      document.getElementById("closeModalBtn").addEventListener("click", closeModal);
-      document.getElementById("submitCodeBtn").addEventListener("click", submitCode);
-      codeInputEl.addEventListener("keydown", e => {
-        if (e.key === "Enter") submitCode();
-      });
-      document.getElementById("restartBtn").addEventListener("click", () => location.reload());
+      document.getElementById("closeModalBtn").onclick = closeModal;
       modalEl.addEventListener("click", e => {
         if (e.target === modalEl) closeModal();
       });
+      document.getElementById("clearSelectBtn").onclick = clearSelect;
+      document.getElementById("hintBtn").onclick = tryHint;
+      document.getElementById("alarmBtn").onclick = () => failGame("你手滑触发了警报。老板和保安同时冲了进来。");
+      document.getElementById("startTimed").onclick = () => startGame(true);
+      document.getElementById("startRelax").onclick = () => startGame(false);
+      document.getElementById("restartBtn").onclick = () => location.reload();
     }
 
     bindEvents();
